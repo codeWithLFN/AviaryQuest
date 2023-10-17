@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".SettingsActivity">
+
+    <TextView
+        android:id="@+id/textSettingsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:text="User Settings"
+        android:textColor="#000000"
+        android:textColorHint="#000000"
+        android:textSize="24sp" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupUnits"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/textSettingsTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp">
+
+        <RadioButton
+            android:id="@+id/radioMetric"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Metric (km)"
+            android:textColor="#000000"
+            android:textColorHint="#000000"
+            android:layout_marginEnd="16dp" />
+
+        <RadioButton
+            android:id="@+id/radioImperial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Imperial (mi)"
+            android:textColor="#000000"
+            android:textColorHint="#000000"/>
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/editMaxDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/radioGroupUnits"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:hint="Max Distance (km/mi)"
+        android:inputType="numberDecimal"
+        android:textColor="#050505"
+        android:textColorHint="#1C1C1C" />
+
+    <Button
+        android:id="@+id/btnSaveSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#189DE3"
+        android:text="Save Settings"
+        android:layout_below="@id/editMaxDistance"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/editCurrentPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnSaveSettings"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:hint="Current Password"
+        android:inputType="textPassword"
+        android:textColor="#0C0C0C"
+        android:textColorHint="#000000" />
+
+    <EditText
+        android:id="@+id/editNewPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editCurrentPassword"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:hint="New Password"
+        android:inputType="textPassword"
+        android:textColor="#000000"
+        android:textColorHint="#000000" />
+
+    <Button
+        android:id="@+id/btnChangePassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#189DE3"
+        android:text="Change Password"
+        android:layout_below="@id/editNewPassword"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/editDeleteAccountPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnChangePassword"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:hint="Account Password"
+        android:inputType="textPassword"
+        android:textColor="#101010"
+        android:textColorHint="#000000" />
+
+    <Button
+        android:id="@+id/btnDeleteAccount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#189DE3"
+        android:text="Delete Account"
+        android:layout_below="@id/editDeleteAccountPassword"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#189DE3"
+        android:text="Logout"
+        android:layout_below="@id/btnDeleteAccount"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:background="@color/white"
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/nav_menu" />
+
+</RelativeLayout>

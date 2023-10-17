@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "627035350078",
+    "project_id": "aviaryquest",
+    "storage_bucket": "aviaryquest.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:627035350078:android:f5024c801d51ca497b9d6f",
+        "android_client_info": {
+          "package_name": "com.example.aviaryquest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjGUXJf5LzC6Nvx8xJe8kp-8y16PI4ihA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
