@@ -8,13 +8,20 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.*
 import org.json.JSONArray
 import java.io.IOException
@@ -24,11 +31,24 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerC
     private lateinit var mapView: MapView
     private lateinit var map: GoogleMap
     private lateinit var bottomNavigation: BottomNavigationView
+    private var userLocation: LatLng? = null
+    private var userLocationMarker: Marker? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var firebaseAuth: FirebaseAuth
+    private var currentUser: FirebaseUser? = null
+    private lateinit var db: FirebaseFirestore
+    private val hotspots: MutableList<Pair<String, LatLng>> = mutableListOf()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
+        firebaseAuth = FirebaseAuth.getInstance()
+        currentUser = firebaseAuth.currentUser
+        db = FirebaseFirestore.getInstance()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         mapView = findViewById(R.id.mapView)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
@@ -100,15 +120,17 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerC
         val southAfrica = LatLng(-30.5595, 22.9375)
         map.moveCamera(CameraUpdateFactory.newLatLng(southAfrica))
 
-
         //Method to fetch bird hotspots from eBird API
         fetchBirdHotspots()
+
+        //stores the marker location do ne by the user
+        fetchObservations()
+
     }
 
     private fun fetchBirdHotspots() {
         val eBirdAPIKey = "ci1hchanvu0t"
         val url = "https://api.ebird.org/v2/data/obs/ZA/recent?hotspot=true&locale=en_US&fmt=json&key=$eBirdAPIKey"
-
 
         val request = Request.Builder()
             .url(url)
@@ -139,6 +161,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerC
 
                             val hotspotName = if (jsonObject.has("locName")) jsonObject.getString("locName") else ""
 
+                            hotspots.add(Pair(hotspotName, LatLng(lat, lng)))
+
                             runOnUiThread {
                                 val hotspotLocation = LatLng(lat, lng)
                                 map.addMarker(MarkerOptions().position(hotspotLocation).title(hotspotName))
@@ -148,7 +172,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerC
                 }
             }
         })
-
+        //
         map.setOnMarkerClickListener(this)
     }
 
@@ -159,6 +183,67 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerC
         )
         startActivity(intent)
         return true
+    }
+
+    //Method to fetch max distance from Firestore
+    private fun fetchMaxDistance(): Double {
+        val user = firebaseAuth.currentUser
+        val userUid = user?.uid
+        var maxDistance = 0.0
+
+        if (userUid != null) {
+            db.collection("users")
+                .document(userUid)
+                .get()
+                .addOnSuccessListener { documentSnapshot ->
+                    // Retrieve the maxDistance field from the user's document
+                    maxDistance = documentSnapshot.getDouble("maxDistance") ?: 0.0
+                }
+                .addOnFailureListener { exception ->
+                    // Handle any errors in fetching data from Firestore
+                }
+        }
+
+        return maxDistance
+    }
+
+    //Fetch observations location from Firestore
+    private fun fetchObservations() {
+        val user = firebaseAuth.currentUser
+        val userUid = user?.uid
+
+        if (userUid != null) {
+            db.collection("users")
+                .document(userUid)
+                .collection("observations")
+                .get()
+                .addOnSuccessListener { documents ->
+                    for (document in documents) {
+                        val locationString = document.getString("location")
+                        val latLong = locationString?.split(",") // Split string into latitude and longitude
+
+                        if (latLong?.size == 2) {
+                            val latitude = latLong[0].toDouble() // Extract latitude
+                            val longitude = latLong[1].toDouble() // Extract longitude
+
+                            val observationLocation = LatLng(latitude, longitude)
+                            val markerOptions = MarkerOptions().position(observationLocation)
+
+                            // marker title and color
+                            markerOptions.title("Observation").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+
+                            map.addMarker(markerOptions)
+
+
+                        }
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    // Handle any errors in fetching data from Firestore
+                }
+        }
+        // Add this line to enable marker click event
+        map.setOnMarkerClickListener(this)
     }
 
     override fun onResume() {
@@ -197,6 +282,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerC
         }
     }
 
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -215,7 +301,3 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerC
     }
 
 }
-
-
-
-
