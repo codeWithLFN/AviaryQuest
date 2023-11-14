@@ -37,7 +37,7 @@ AviaryQuest is a feature-rich Android application developed in Kotlin for bird e
 
 ## Contributing
 
-We welcome contributions to enhance AviaryQuest Birdspotter! If you'd like to contribute, please read our [Contribution Guidelines](CONTRIBUTING.md).
+We welcome contributions to enhance AviaryQuest!
 
 ## License
 
