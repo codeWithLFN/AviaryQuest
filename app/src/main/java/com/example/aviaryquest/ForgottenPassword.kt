@@ -31,8 +31,6 @@ class ForgottenPassword : AppCompatActivity() {
 
         Back = findViewById(R.id.img_forgotten_password)
         etUsername = findViewById(R.id.ProfileUsername)
-        etCurrentPassword = findViewById(R.id.ProfileCurrentPassword)
-        etNewPassword = findViewById(R.id.ProfileNewPassword)
         btnChangePassword = findViewById(R.id.btnChangePassword)
 
         // Pressing this image view will take you back to the main page
@@ -43,43 +41,32 @@ class ForgottenPassword : AppCompatActivity() {
 
         btnChangePassword.setOnClickListener {
             val username = etUsername.text.toString().trim()
-            val currentPassword = etCurrentPassword.text.toString().trim()
-            val newPassword = etNewPassword.text.toString().trim()
 
-            // Check if the username exists and matches the current password
-            firestore.collection("users").document(username).get().addOnSuccessListener { documentSnapshot ->
-                val user = documentSnapshot.toObject(User::class.java)
-                if (user != null && user.password == currentPassword) {
-                    // Perform change password logic using Firebase Auth
-                    val email = username // Change to your domain
-                    val userAuth = auth.currentUser
-                    if (userAuth != null) {
-                        val credential = EmailAuthProvider.getCredential(email, currentPassword)
-                        userAuth.reauthenticate(credential).addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                userAuth.updatePassword(newPassword).addOnCompleteListener {task ->
-                                    if (task.isSuccessful) {
-                                        // Update the password in Firestore
-                                        updatePasswordInFirestore(username, newPassword)
-                                        Toast.makeText(this, "Password updated successfully", Toast.LENGTH_LONG).show()
-                                    } else {
-                                        Toast.makeText(this, "Error updating password", Toast.LENGTH_LONG).show()
-                                    }
-                                }
-                            } else {
-                                Toast.makeText(this, "Authentication failed", Toast.LENGTH_LONG).show()
-                            }
-                        }
-                    } else {
-                        Toast.makeText(this, "Please log in first", Toast.LENGTH_LONG).show()
-                    }
-                } else {
-                    Toast.makeText(this, "Invalid username or password", Toast.LENGTH_LONG).show()
-                }
+            if (username.isEmpty()) {
+                Toast.makeText(this, "Please enter your email", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
-            etUsername.text.clear()
-            etCurrentPassword.text.clear()
-            etNewPassword.text.clear()
+
+            // Send password reset email using Firebase
+            auth.sendPasswordResetEmail(username)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(
+                            this,
+                            "Password reset email sent to $username",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        // Navigate to login or wherever appropriate
+                        val intent = Intent(this, Login::class.java)
+                        startActivity(intent)
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "Failed to send password reset email. Check your email address.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
         }
     }
 
