@@ -1,6 +1,6 @@
 # AviaryQuest
 
-AviaryQuest is a feature-rich Android application developed in Kotlin for bird enthusiasts. This app helps bird watchers track their bird-watching activities, discover nearby birding hotspots, record bird observations, get directions to their favorite locations, and even identify bird species from photos using TensorFlow Lite for Bird Species Recognition. It integrates with eBird API 2.0 for hotspot information, utilizes Google Maps API for mapping, and leverages Firestore for data storage.
+AviaryQuest is a Android application developed in Kotlin for bird enthusiasts. This app helps bird watchers track their bird-watching activities, discover nearby birding hotspots, record bird observations, get directions to their favorite locations, and even identify bird species from photos using TensorFlow Lite for Bird Species Recognition. It integrates with eBird API 2.0 for hotspot information, utilizes Google Maps API for mapping, and leverages Firestore for data storage.
 
 ## Features
 
